@@ -8,6 +8,7 @@ The Framework of this repo is based upon PIM-Embedding-Lookup from:https://githu
 To use it, please config parameters in file "run.sh". By changing the parameters in random_env() and random_run(), you should be able to configure the DLRM model. One thing to mention is you need to change the file path in "run.sh" into your specific settings.
 
 You can modify the number of embedding tables by changing the value of "NR_TABLES". It is important to note that the value of "NR_TABLES" should match the number of embedding tables you input. Table's dimension is changeable as well as input's batch size and pooling factor.
+
 You have the options to configure the number of DPUs and tasklets to be used. It is important to ensure that enough DPUs are allocated to save all embedding tables, otherwise, errors may occur.
 
 After configing all the parameters,use ./run.sh -br random to try with syntheic input.
