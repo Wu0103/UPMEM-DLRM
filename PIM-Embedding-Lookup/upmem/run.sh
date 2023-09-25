@@ -46,7 +46,6 @@ export NR_TASKLETS=16
 export NR_DPUS=93
 export TABLE_ROW=1000000-1000000-1000000-1000000
 export ROW_TOTAL=1000000
-#export COL_DPU=93
 export POOLING=20
 pooling="#define pooling_factor ${POOLING}"
 sed -i "6c ${pooling}" /home/kaist_icn/wuxiangyu/upload/dlrm/PIM-Embedding-Lookup/upmem/PIM-common/common/include/common.h

@@ -130,8 +130,6 @@ int main(){
     return 0;
 }
 
-
-/*
 #include "common/include/common.h"
 #include "emb_types.h"
 
