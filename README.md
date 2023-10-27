@@ -29,3 +29,7 @@ To see the performance of running DLRM in CPU, you can simply change **python "$
 # Results
 
 DLRM latency will be automatically print to terminal, for detailed latency breakdown please uncomment some part of code in dlrm_dpu_pytorch.py. It will save the results to your local file.
+
+# Contact
+
+Please email me at wuxiangyu@kaist.ac.kr if you have any problem using it.
