@@ -54,6 +54,7 @@ Please email me at wuxiangyu@kaist.ac.kr if you have any problem using it.
       changed lookup() function to first transfer index data and offset data to DPUs, and then invoke kernel program to do embedding lookup in DPUs; After that will get results back to CPU and convert the results into float point data
 
   /src/dpu/emb_dpu_lookup.c:
+  
       changed main() funcion to load data from MRAM into WRAM
       changed lookup() function to do embedding lookup
 
