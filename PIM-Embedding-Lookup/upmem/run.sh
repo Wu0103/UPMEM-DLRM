@@ -49,10 +49,10 @@ export ROW_TOTAL=100000
 export COL_DPU=1
 export POOLING=15
 pooling="#define pooling_factor ${POOLING}"
-sed -i "6c ${pooling}" /home/kaist_icn/wuxiangyu/upload/dlrm/PIM-Embedding-Lookup/upmem/PIM-common/common/include/common.h
 rowtotal="#define row_total ${ROW_TOTAL}"
-sed -i "9c ${rowtotal}" /home/kaist_icn/wuxiangyu/upload/dlrm/PIM-Embedding-Lookup/upmem/PIM-common/common/include/common.h
 coldpu="#define Col_DPU ${COL_DPU}"
+sed -i "6c ${pooling}" /home/kaist_icn/wuxiangyu/upload/dlrm/PIM-Embedding-Lookup/upmem/PIM-common/common/include/common.h
+sed -i "9c ${rowtotal}" /home/kaist_icn/wuxiangyu/upload/dlrm/PIM-Embedding-Lookup/upmem/PIM-common/common/include/common.h
 sed -i "10c ${coldpu}" /home/kaist_icn/wuxiangyu/upload/dlrm/PIM-Embedding-Lookup/upmem/PIM-common/common/include/common.h
 }
 
