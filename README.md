@@ -36,7 +36,9 @@ DLRM latency will be automatically print to terminal, just like the figure below
 ![image](https://github.com/Wu0103/UPMEM-DLRM/assets/94586355/522fea37-ca9a-4e53-b811-49a2d9fbab3a)
 
 
-# Modified function list
+# For your customization
+
+If you want to implement something new, my modification point can be good starting point. Below are the functions I modified.
   
 /UPMEM:
 
