@@ -31,13 +31,6 @@ dataset_valid() {
     return 1
 }
 
-kaggle_env() {
-    export NR_TABLES=26
-    export NR_COLS=16
-    export MAX_NR_BATCHES=512
-    export NR_TASKLETS=14
-}
-
 random_env() {
 export NR_TABLES=2
 export NR_COLS=60
@@ -56,17 +49,6 @@ sed -i "9c ${rowtotal}" /home/kaist_icn/wuxiangyu/upload/dlrm/PIM-Embedding-Look
 sed -i "10c ${coldpu}" /home/kaist_icn/wuxiangyu/upload/dlrm/PIM-Embedding-Lookup/upmem/PIM-common/common/include/common.h
 }
 
-toy_env() {
-    export NR_COLS=8
-    export DPU_TEST=1
-    export NR_TASKLETS=1
-}
-
-global_env() {
-    "${verbose}" && export V=1
-    "${debug}" && export DEBUG=1
-    return 0
-}
 
 random_run() {
     python3 "${cwd}/../PIM-dlrm-new/dlrm_dpu_pytorch.py" \
@@ -80,6 +62,25 @@ random_run() {
            --num-indices-per-lookup=${POOLING} \
            --num-indices-per-lookup-fixed=True \
            --inference-only
+}
+
+global_env() {
+    "${verbose}" && export V=1
+    "${debug}" && export DEBUG=1
+    return 0
+}
+
+toy_env() {
+    export NR_COLS=8
+    export DPU_TEST=1
+    export NR_TASKLETS=1
+}
+
+kaggle_env() {
+    export NR_TABLES=26
+    export NR_COLS=16
+    export MAX_NR_BATCHES=512
+    export NR_TASKLETS=14
 }
 
 toy_run() {

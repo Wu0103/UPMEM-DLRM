@@ -551,7 +551,7 @@ class DLRM_Net(nn.Module):
             
         te = time.time()
         exect = (te-ts)*1000
-        print("time is :",exect)
+        #print("time is :",exect)
 
         ts = time.time()
         '''
@@ -570,7 +570,7 @@ class DLRM_Net(nn.Module):
 
         te = time.time()
         exect = (te-ts)*1000
-        print("pro time is :",exect)
+        #print("pro time is :",exect)
 
         #for i,result in enumerate(results):
         #    lr.append(torch.Tensor(result).reshape(args.mini_batch_size,self.m_spa))
@@ -633,7 +633,7 @@ class DLRM_Net(nn.Module):
 
         return R
     
-    @fwd_timer
+    #@fwd_timer
     def forward(self, dense_x, lS_o, lS_i):
         if ext_dist.my_size > 1:
             # multi-node multi-device run
