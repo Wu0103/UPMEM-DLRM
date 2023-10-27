@@ -15,7 +15,10 @@ By configure **"NR_DPUS"**, you can decide how many DPUs are used for one table;
 
 The relation between **"NR_DPUS"** and **"COL_DPU"** is, firstly **"COL_DPU"** should not bigger than **"NR_DPUS"**; For column wise partition, **"NR_DPUS"** and **"COL_DPU"** need to be the same value; For row wise partition, **"NR_DPUS"** is the number of DPUs you want to use and  **"COL_DPU"** should be 1; For hybrid paritition, the results of **"NR_DPUS"/"COL_DPU"** shoule be an integer number;
 
-**One thing to mention is you need to change the file path in "run.sh" into your specific settings.**(Default path is “/home/kaist_icn/wuxiangyu/upload/dlrm/PIM-Embedding-Lookup/upmem/PIM-common/common/include/common.h”)
+**One thing to mention is you need to change the file path in "run.sh" into your specific settings---please refer to the figure below.**(Default path is “/home/kaist_icn/wuxiangyu/upload/dlrm/PIM-Embedding-Lookup/upmem/PIM-common/common/include/common.h”)
+
+![image](https://github.com/Wu0103/UPMEM-DLRM/assets/94586355/8badf847-01bd-4daa-b051-252971df53e5)
+
 
 **You have the options to configure the number of DPUs and tasklets to be used. It is important to ensure that enough DPUs are allocated to save all embedding tables, otherwise, errors may occur.**
 
