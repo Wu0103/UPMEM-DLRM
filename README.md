@@ -6,13 +6,13 @@ The Framework of this repo is based upon PIM-Embedding-Lookup from: (https://git
 # Pre-requirment
 
 
-**You need to change the file path in **"/upmem/run.sh"**" into your specific settings---please refer to the figure below.**(Default path is “/home/kaist_icn/wuxiangyu/upload/dlrm/PIM-Embedding-Lookup/upmem/PIM-common/common/include/common.h”)
+**You need to change the file path in **"/PIM-Embedding-Lookup/upmem/run.sh"**" into your specific settings---please refer to the figure below.**(Default path is “/home/kaist_icn/wuxiangyu/upload/dlrm/PIM-Embedding-Lookup/upmem/PIM-common/common/include/common.h”)
 
 ![image](https://github.com/Wu0103/UPMEM-DLRM/assets/94586355/8badf847-01bd-4daa-b051-252971df53e5)
 
 # Usage
 
-To use it, please config parameters in file **"/upmem/run.sh"**.**"run.sh"** is a file of shell script, bascially all you need to modify is in this file.
+To use it, please config parameters in file **"/PIM-Embedding-Lookup/upmem/run.sh"**.**"run.sh"** is a file of shell script, bascially all you need to modify is in this file.
 
 By changing the parameters in **random_env() and random_run()**, you should be able to configure the DLRM model. For example, You can modify the number of embedding tables by changing the value of **"NR_TABLES"**. It is important to note that the value of **"NR_TABLES"*** should match the number of embedding tables you input. Table's dimension is changeable as well as input's batch size and pooling factor.
 
@@ -40,16 +40,16 @@ DLRM latency will be automatically print to terminal, just like the figure below
 
 If you want to implement something new, my modification point can be good starting point. Below are the functions I modified.
   
-  /UPMEM/run.sh: 
+  /PIM-Embedding-Lookup/UPMEM/run.sh: 
   
       changed random_env() to make system configureable as showed in README
       
-  /UPMEM/scr/emb_host.c:
+  /PIM-Embedding-Lookup/UPMEM/scr/emb_host.c:
   
       changed populate_mram() function to preload table data to dpu_set_t
       changed lookup() function to first transfer index data and offset data to DPUs, and then invoke kernel program to do embedding lookup in DPUs; After that will get results back to CPU and convert the results into float point data
 
-  /UPMEM/src/dpu/emb_dpu_lookup.c:
+  /PIM-Embedding-Lookup/UPMEM/src/dpu/emb_dpu_lookup.c:
   
       changed main() funcion to load data from MRAM into WRAM
       changed lookup() function to do embedding lookup
