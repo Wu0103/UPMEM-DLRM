@@ -36,10 +36,6 @@ DLRM latency will be automatically print to terminal, just like the figure below
 ![image](https://github.com/Wu0103/UPMEM-DLRM/assets/94586355/522fea37-ca9a-4e53-b811-49a2d9fbab3a)
 
 
-# Contact
-
-Please email me at wuxiangyu@kaist.ac.kr if you have any problem using it.
-
 # Modified function list
   
 /UPMEM:
@@ -59,3 +55,6 @@ Please email me at wuxiangyu@kaist.ac.kr if you have any problem using it.
       changed lookup() function to do embedding lookup
 
 
+# Contact
+
+Please email me at wuxiangyu@kaist.ac.kr if you have any problem using it.
