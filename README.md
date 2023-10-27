@@ -20,7 +20,7 @@ By changing the parameters in **random_env() and random_run()**, you should be a
 
 By configure **"NR_DPUS"**, you can decide how many DPUs are used for one table; To use different partition scheme, you should configure **"COL_DPU"**, which indicate how many DPUs you are using to do column-wise partition. For example, for a 200*10 elements table (200 is the length of the table and 10 is the width/dimension of the table), if you configure **"COL_DPU"** as 10, it's column-wise partition; If you configure **"COL_DPU"** as 5 or 2, it's hybrid partition; If you configure **"COL_DPU"** as 1, it's row partition.
 
-The relation between **"NR_DPUS"** and **"COL_DPU"** is, firstly **"COL_DPU"** should not bigger than **"NR_DPUS"**; For column wise partition, **"NR_DPUS"** and **"COL_DPU"** need to be the same value; For row wise partition, **"NR_DPUS"** is the number of DPUs you want to use and  **"COL_DPU"** should be 1; For hybrid paritition, the results of **"NR_DPUS"/"COL_DPU"** shoule be an integer number;
+The relation between **"NR_DPUS"** and **"COL_DPU"** is, firstly **"COL_DPU"** should not bigger than **"NR_DPUS"**; For column wise partition, **"NR_DPUS"** and **"COL_DPU"** need to be the same value; For row wise partition, **"NR_DPUS"** is the number of DPUs you want to use and  **"COL_DPU"** should be 1; For hybrid partition, the results of **"NR_DPUS"/"COL_DPU"** should be an integer number;
 
 
 **You have the options to configure the number of DPUs and tasklets to be used. It is important to ensure that enough DPUs are allocated to save all embedding tables, otherwise, errors may occur.**
