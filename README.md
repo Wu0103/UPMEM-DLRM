@@ -31,7 +31,10 @@ To see the performance of running DLRM in CPU, you can simply change **python "$
 
 # Results
 
-DLRM latency will be automatically print to terminal, for detailed latency breakdown please uncomment some part of code in dlrm_dpu_pytorch.py. It will save the results to your local file.
+DLRM latency will be automatically print to terminal, just like the figure below shows: CPU-DPU indicates the latency of transfer input data from CPU to DPUs. kernel indicates DPU program running latency and DPU-CPU indicates the latency of get results back to CPU. For detailed latency breakdown please uncomment some part of code in dlrm_dpu_pytorch.py. It will save the results to your local file.
+
+![image](https://github.com/Wu0103/UPMEM-DLRM/assets/94586355/522fea37-ca9a-4e53-b811-49a2d9fbab3a)
+
 
 # Contact
 
