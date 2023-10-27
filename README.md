@@ -25,7 +25,7 @@ The relation between **"NR_DPUS"** and **"COL_DPU"** is, firstly **"COL_DPU"** s
 
 **You have the options to configure the number of DPUs and tasklets to be used. It is important to ensure that enough DPUs are allocated to save all embedding tables, otherwise, errors may occur.**
 
-After configing all the parameters,use **./run.sh -br random** in the terminal to try with synthetic input.
+After configing all the parameters,use **./run.sh -br random** in the terminal to try with synthetic input; For now, only synthetic is supported.
 
 To see the performance of running DLRM in CPU, you can simply change **python "${dlrm}/dlrm_dpu_pytorch.py"** in file **"run.sh"** to **python "${dlrm}/dlrm_s_pytorch.py"**.
 
