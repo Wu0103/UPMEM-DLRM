@@ -5,7 +5,7 @@ The Framework of this repo is based upon PIM-Embedding-Lookup from: (https://git
 
 # Usage
 
-To use it, please config parameters in file **"run.sh"**.**"run.sh"** is a file of shell script, bascially all you need to modify is in this file.
+To use it, please config parameters in file **"/upmem/run.sh"**.**"run.sh"** is a file of shell script, bascially all you need to modify is in this file.
 
 By changing the parameters in **random_env() and random_run()**, you should be able to configure the DLRM model. For example, You can modify the number of embedding tables by changing the value of **"NR_TABLES"**. It is important to note that the value of **"NR_TABLES"*** should match the number of embedding tables you input. Table's dimension is changeable as well as input's batch size and pooling factor.
 
