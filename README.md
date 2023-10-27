@@ -11,7 +11,7 @@ By changing the parameters in **random_env() and random_run()**, you should be a
 
 ![image](https://github.com/Wu0103/UPMEM-DLRM/assets/94586355/2d38e5ed-bb2b-41ef-be68-99623df8a3f3)
 
-By configure **"NR_DPUS"**, you can decide how many DPUs are used for one table; To use different partition scheme, you should configure **"COL_DPU"**, which indicate how many DPUs you are using to do column-wise partition. For example, for a 200*10 elements table, if you configure **"COL_DPU"** as 10, it's column-wise partition; If you configure **"COL_DPU"** as 5 or 2, it's hybrid partition; If you configure **"COL_DPU"** as 1, it's row partition.
+By configure **"NR_DPUS"**, you can decide how many DPUs are used for one table; To use different partition scheme, you should configure **"COL_DPU"**, which indicate how many DPUs you are using to do column-wise partition. For example, for a 200*10 elements table (200 is the length of the table and 10 is the width/dimension of the table), if you configure **"COL_DPU"** as 10, it's column-wise partition; If you configure **"COL_DPU"** as 5 or 2, it's hybrid partition; If you configure **"COL_DPU"** as 1, it's row partition.
 
 **One thing to mention is you need to change the file path in "run.sh" into your specific settings.**
 
