@@ -3,10 +3,11 @@
 
 
 #define T int
-#define pooling_factor 20
+#define pooling_factor 15
 #define NR_TASKLETS 16
 #define off_length     MAX_NR_BATCHES
-#define row_total 1000000
+#define row_total 100000
+#define Col_DPU 1
 
 
 

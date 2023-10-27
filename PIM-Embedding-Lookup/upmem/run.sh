@@ -39,18 +39,21 @@ kaggle_env() {
 }
 
 random_env() {
-export NR_TABLES=4     #
-export NR_COLS=93
+export NR_TABLES=2
+export NR_COLS=60
 export MAX_NR_BATCHES=16
 export NR_TASKLETS=16
-export NR_DPUS=93
-export TABLE_ROW=1000000-1000000-1000000-1000000
-export ROW_TOTAL=1000000
-export POOLING=20
+export NR_DPUS=60
+export TABLE_ROW=100000-100000
+export ROW_TOTAL=100000
+export COL_DPU=1
+export POOLING=15
 pooling="#define pooling_factor ${POOLING}"
 sed -i "6c ${pooling}" /home/kaist_icn/wuxiangyu/upload/dlrm/PIM-Embedding-Lookup/upmem/PIM-common/common/include/common.h
 rowtotal="#define row_total ${ROW_TOTAL}"
 sed -i "9c ${rowtotal}" /home/kaist_icn/wuxiangyu/upload/dlrm/PIM-Embedding-Lookup/upmem/PIM-common/common/include/common.h
+coldpu="#define Col_DPU ${COL_DPU}"
+sed -i "10c ${coldpu}" /home/kaist_icn/wuxiangyu/upload/dlrm/PIM-Embedding-Lookup/upmem/PIM-common/common/include/common.h
 }
 
 toy_env() {
@@ -73,7 +76,7 @@ random_run() {
            --arch-mlp-top=40-20-10-1 \
            --data-generation=random \
            --mini-batch-size=${MAX_NR_BATCHES} \
-           --num-batches=50 \
+           --num-batches=20 \
            --num-indices-per-lookup=${POOLING} \
            --num-indices-per-lookup-fixed=True \
            --inference-only

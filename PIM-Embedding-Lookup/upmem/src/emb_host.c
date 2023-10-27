@@ -88,7 +88,7 @@ void populate_mram(uint32_t table_id, uint64_t nr_rows, int32_t *table_data, dpu
         fprintf(stderr,"%d ranks available but tried to load table %dth",AVAILABLE_RANKS,table_id);
         exit(1);
     }
-    res[table_id] = malloc(MAX_NR_BATCHES*NR_COLS*sizeof(int));
+    res[table_id] = malloc(20*ALIGN(NR_DPUS*MAX_NR_BATCHES*NR_COLS*sizeof(int)/COL_DPU,8));
 
     if (alloc_buffers(table_id, table_data, nr_rows) != 0) {
         enomem();
@@ -138,16 +138,78 @@ int32_t* lookup(uint32_t* indices, uint32_t *offsets, uint64_t indices_len,uint6
     nr_batches /= table_id;
     printf("************************************************************************************ \n");
 
-gettimeofday(&cpudpus, NULL);
+    struct query_len len[table_id][NR_DPUS/COL_DPU];
+    int idx_limit [table_id][NR_DPUS/COL_DPU];
+    int record[table_id][NR_DPUS/COL_DPU];
+    int offset_dpu [table_id][(MAX_NR_BATCHES+1)][NR_DPUS/COL_DPU];
+    typedef struct {
+        int b_idx[MAX_NR_BATCHES*POOLING];
+        int offset[MAX_NR_BATCHES+1];
+        int offset_length;
+    } input;
+    input *data = (input*)calloc(table_id*NR_DPUS/COL_DPU,sizeof(input));
+
+    gettimeofday(&cpudpus, NULL);
     lengths.indices_len=indices_len;
     lengths.nr_batches=nr_batches;
-#pragma omp parallel for
-for(int i=0;i<table_id;i++){
-    DPU_ASSERT(dpu_broadcast_to(dpu_ranks[i], "input_indices", 0 , &indices[i*indices_len],ALIGN(indices_len*sizeof(uint32_t),8), DPU_XFER_DEFAULT));
-    DPU_ASSERT(dpu_broadcast_to(dpu_ranks[i], "input_offsets", 0 , &offsets[i*nr_batches], nr_batches*sizeof(uint32_t), DPU_XFER_DEFAULT));
-    DPU_ASSERT(dpu_broadcast_to(dpu_ranks[i], "len", 0 , &lengths, sizeof(struct query_len), DPU_XFER_DEFAULT));
-}
-#pragma omp barrier
+    int row = NR_COLS/COL_DPU;
+    if(row==1){
+        #pragma omp parallel for
+        for(int i=0;i<table_id;i++){
+            DPU_ASSERT(dpu_broadcast_to(dpu_ranks[i], "input_indices", 0 , &indices[i*indices_len],ALIGN(indices_len*sizeof(uint32_t),8), DPU_XFER_DEFAULT));
+            DPU_ASSERT(dpu_broadcast_to(dpu_ranks[i], "input_offsets", 0 , &offsets[i*nr_batches], nr_batches*sizeof(uint32_t), DPU_XFER_DEFAULT));
+            DPU_ASSERT(dpu_broadcast_to(dpu_ranks[i], "len", 0 , &lengths, sizeof(struct query_len), DPU_XFER_DEFAULT));
+        }
+        #pragma omp barrier
+    }else{
+        memset(idx_limit,0,(NR_DPUS/COL_DPU)*sizeof(int)*table_id);
+        memset(offset_dpu,0,(NR_DPUS/COL_DPU)*(MAX_NR_BATCHES+1)*sizeof(int)*table_id);
+        #pragma omp parallel for
+        for(int i=0;i<table_id;i++){
+            int rowdpu = (NR_DPUS/COL_DPU);
+            int eachdpu = ROW_TOTAL/rowdpu;
+            for(int x=0;x<rowdpu;x++){
+                data[i*rowdpu+x].offset_length = 1;
+                memset(data[i*rowdpu+x].b_idx,0,sizeof(int)*MAX_NR_BATCHES*POOLING);
+                memset(data[i*rowdpu+x].offset,0,sizeof(int)*(MAX_NR_BATCHES+1));
+            }
+            for(int n=0,j = 1;n<indices_len;n++){
+                int base = indices[i*indices_len+n]/eachdpu;    
+                int off = idx_limit[i][base];
+                data[i*rowdpu+base].b_idx[off] = indices[i*indices_len+n]%eachdpu;
+                idx_limit[i][base]++;
+                offset_dpu[i][j-1][base] = 1;
+                data[i*rowdpu+base].offset[data[i*rowdpu+base].offset_length] = idx_limit[i][base];
+                if((n==(offsets[i*nr_batches+j]-1))){
+                    j++;
+                    for(int k=0;k<(rowdpu);k++){
+                        if(data[i*rowdpu+k].offset[data[i*rowdpu+k].offset_length]!=0)    data[i*rowdpu+k].offset_length++;
+                    }
+                }
+            }
+            
+            int max=0;
+            for(int x=0;x<rowdpu;x++){
+                len[i][x].indices_len = idx_limit[i][x];
+                if(max<idx_limit[i][x]) max = idx_limit[i][x];
+            }
+            DPU_FOREACH(dpu_ranks[i], dpu, dpu_id){DPU_ASSERT(dpu_prepare_xfer(dpu,&data[dpu_id/COL_DPU+i*rowdpu].b_idx[0]));}
+            DPU_ASSERT(dpu_push_xfer(dpu_ranks[i], DPU_XFER_TO_DPU, "input_indices",0,ALIGN(max*sizeof(uint32_t),8), DPU_XFER_DEFAULT));
+            max=0;
+            for(int x=0;x<rowdpu;x++){
+                record[i][x] = data[i*rowdpu+x].offset_length;
+                if(record[i][x]>=MAX_NR_BATCHES) record[i][x] = MAX_NR_BATCHES;
+                len[i][x].nr_batches = record[i][x];
+                if(max<record[i][x]) max = record[i][x];
+            }
+            DPU_FOREACH(dpu_ranks[i], dpu, dpu_id){DPU_ASSERT(dpu_prepare_xfer(dpu,&data[dpu_id/COL_DPU+i*rowdpu].offset[0]));}
+            DPU_ASSERT(dpu_push_xfer(dpu_ranks[i], DPU_XFER_TO_DPU, "input_offsets",0,ALIGN(max*sizeof(uint32_t),8), DPU_XFER_DEFAULT));
+
+            DPU_FOREACH(dpu_ranks[i], dpu, dpu_id){DPU_ASSERT(dpu_prepare_xfer(dpu,&len[i][dpu_id/COL_DPU]));}
+            DPU_ASSERT(dpu_push_xfer(dpu_ranks[i], DPU_XFER_TO_DPU, "len",0,sizeof(struct query_len), DPU_XFER_DEFAULT));
+            
+        }
+    }
 gettimeofday(&cpudpue, NULL);
 gettimeofday(&upmems, NULL);
 for(int i=0;i<table_id;i++){
@@ -159,15 +221,57 @@ for(int i=0;i<table_id;i++){
 gettimeofday(&upmeme, NULL);
 gettimeofday(&dpucpus, NULL);
 
-#pragma omp parallel for
-for(int i=0;i<table_id;i++){
-    DPU_FOREACH(dpu_ranks[i], dpu, dpu_id){DPU_ASSERT(dpu_prepare_xfer(dpu,&res[i][dpu_id*nr_batches*NR_COLS/NR_DPUS]));}
-    DPU_ASSERT(dpu_push_xfer(dpu_ranks[i], DPU_XFER_FROM_DPU, "results",0,ALIGN(sizeof(int32_t)*nr_batches*NR_COLS/NR_DPUS,2), DPU_XFER_DEFAULT));
-    for (int j=0; j<NR_COLS; j++){
-        for(int n=0; n<nr_batches; n++)
-            //final_results[n*NR_COLS+j]=(float)res[i][j*nr_batches+n]/1000000000;
-            final_results[i*NR_COLS*nr_batches+n*NR_COLS+j]=(float)res[i][j*nr_batches+n]/1000000000;
+if(row==1){
+    #pragma omp parallel for
+    for(int i=0;i<table_id;i++){
+        DPU_FOREACH(dpu_ranks[i], dpu, dpu_id){DPU_ASSERT(dpu_prepare_xfer(dpu,&res[i][dpu_id*nr_batches*NR_COLS/NR_DPUS]));}
+        DPU_ASSERT(dpu_push_xfer(dpu_ranks[i], DPU_XFER_FROM_DPU, "results",0,ALIGN(sizeof(int32_t)*nr_batches*NR_COLS/NR_DPUS,2), DPU_XFER_DEFAULT));
+        for (int j=0; j<NR_COLS; j++){
+            for(int n=0; n<nr_batches; n++)
+                //final_results[n*NR_COLS+j]=(float)res[i][j*nr_batches+n]/1000000000;
+                final_results[i*NR_COLS*nr_batches+n*NR_COLS+j]=(float)res[i][j*nr_batches+n]/1000000000;
+        }
     }
+}else{
+    
+    int rowdpu = (NR_DPUS/COL_DPU);
+    int record_position[rowdpu*table_id];
+    memset(record_position,0,sizeof(int)*rowdpu*table_id);
+    #pragma omp parallel for
+    for(int i=0;i<table_id;i++){
+        int max_size = 0;
+        int rowdpu = NR_DPUS/COL_DPU;
+        for(int n=0;n<rowdpu;n++){
+            if(max_size<record[i][n]){
+                max_size = record[i][n];
+            }
+        }
+        if(max_size>=MAX_NR_BATCHES) max_size = MAX_NR_BATCHES;
+        int size;
+        if(ALIGN(sizeof(int32_t)*max_size*NR_COLS/COL_DPU,8)<ALIGN(sizeof(int32_t)*MAX_NR_BATCHES*NR_COLS/COL_DPU,8)) size = ALIGN(sizeof(int32_t)*max_size*NR_COLS/COL_DPU,8);
+        else size = ALIGN(sizeof(int32_t)*MAX_NR_BATCHES*NR_COLS/COL_DPU,8);
+        DPU_FOREACH(dpu_ranks[i], dpu, dpu_id){DPU_ASSERT(dpu_prepare_xfer(dpu,&res[i][dpu_id*max_size*(NR_COLS/COL_DPU)]));}
+        DPU_ASSERT(dpu_push_xfer(dpu_ranks[i], DPU_XFER_FROM_DPU, "results",0,size, DPU_XFER_DEFAULT));
+        for(int k=0;k<rowdpu;k++){
+            for(int x=0;x<(record[i][k]);x++){
+                if(offset_dpu[i][x][k]!=0){
+                    for(int m=0;m<COL_DPU;m++){
+                        for(int j=0;j<NR_COLS/COL_DPU;j++){
+                            final_results[i*NR_COLS*nr_batches+j+m*NR_COLS/COL_DPU+x*NR_COLS] += res[i][record_position[k+i*rowdpu]*(NR_COLS/COL_DPU)+j];
+                        }
+                    }
+                    record_position[k+i*rowdpu]++;
+                }   
+            }
+        }
+        for(int n=0; n<max_size; n++){
+            for (int j=0; j<NR_COLS; j++){
+                final_results[i*NR_COLS*nr_batches+n*NR_COLS+j]=(float)final_results[i*NR_COLS*nr_batches+n*NR_COLS+j]/1000000000;
+            }
+        }
+    }
+    
+    free(data);
 }
 
 gettimeofday(&dpucpue, NULL);
@@ -178,11 +282,6 @@ printf("cpu-dpu: %.4f\n",cpudpu);
 printf("kernel: %.4f\n",upmem);
 printf("dpu-cpu: %.4f\n",dpucpu);
 
-//for(int i=0;i<20;i++){
-//DPU_FOREACH(dpu_ranks[i], dpu) DPU_ASSERT(dpulog_read_for_dpu(dpu.dpu, stdout));
-//}
-//#pragma omp parallel for
-//for(int i=0;i<table_id;i++) free(res[i]);
     return 0;
 
 }
