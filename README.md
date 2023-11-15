@@ -6,17 +6,16 @@ The Framework of this repo is based upon PIM-Embedding-Lookup from: (https://git
 # Pre-requirment
 To set up the environment, please follow comands below. For reference, version of different packages are provided. 
 
-'''python
-Python3 -m virtualenv fold_name
-source ~/fold_name/bin/activate
-pip install numpy
-pip install torch
-pip install tqdm
-pip install scikit-learn
-pip install tensorboard
-pip install six
-pip install psutil
-'''
+    Python3 -m virtualenv fold_name
+    source ~/fold_name/bin/activate
+    pip install numpy
+    pip install torch
+    pip install tqdm
+    pip install scikit-learn
+    pip install tensorboard
+    pip install six
+    pip install psutil
+
 
 ![image](https://github.com/Wu0103/UPMEM-DLRM/assets/94586355/01351910-5fb4-40e1-97b5-e7c1936b3a61)
 
