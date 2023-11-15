@@ -4,6 +4,20 @@ UPMEM_DLRM is a end-to-end implementation of DLRM in UPMEM system.
 The Framework of this repo is based upon PIM-Embedding-Lookup from: (https://github.com/UBC-ECE-Sasha/PIM-Embedding-Lookup)
 
 # Pre-requirment
+To set up the environment, please follow comands below. For reference, version of different packages are provided. 
+'''
+Python -m virtualenv fold_name
+source ~/fold_name/bin/activate
+pip install numpy
+pip install torch
+pip install tqdm
+pip install scikit-learn
+pip install tensorboard
+pip install six
+pip install psutil
+'''
+
+![image](https://github.com/Wu0103/UPMEM-DLRM/assets/94586355/01351910-5fb4-40e1-97b5-e7c1936b3a61)
 
 
 **You need to change the file path in **"/PIM-Embedding-Lookup/upmem/run.sh"**" into your specific settings---please refer to the figure below.**(Default path is “/home/kaist_icn/wuxiangyu/upload/dlrm/PIM-Embedding-Lookup/upmem/PIM-common/common/include/common.h”)
