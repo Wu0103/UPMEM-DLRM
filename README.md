@@ -5,8 +5,8 @@ The Framework of this repo is based upon PIM-Embedding-Lookup from: (https://git
 
 # Pre-requirment
 To set up the environment, please follow comands below. For reference, version of different packages are provided. 
-'''
-Python -m virtualenv fold_name
+'''python
+Python3 -m virtualenv fold_name
 source ~/fold_name/bin/activate
 pip install numpy
 pip install torch
