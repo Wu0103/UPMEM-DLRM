@@ -44,9 +44,9 @@ export POOLING=15
 pooling="#define pooling_factor ${POOLING}"
 rowtotal="#define row_total ${ROW_TOTAL}"
 coldpu="#define Col_DPU ${COL_DPU}"
-sed -i "6c ${pooling}" /home/kaist_icn/wuxiangyu/upload/dlrm/PIM-Embedding-Lookup/upmem/PIM-common/common/include/common.h
-sed -i "9c ${rowtotal}" /home/kaist_icn/wuxiangyu/upload/dlrm/PIM-Embedding-Lookup/upmem/PIM-common/common/include/common.h
-sed -i "10c ${coldpu}" /home/kaist_icn/wuxiangyu/upload/dlrm/PIM-Embedding-Lookup/upmem/PIM-common/common/include/common.h
+sed -i "6c ${pooling}" /home/kaist_icn/wuxiangyu/UPMEM-DLRM/PIM-Embedding-Lookup/upmem/PIM-common/common/include/common.h
+sed -i "9c ${rowtotal}" /home/kaist_icn/wuxiangyu/UPMEM-DLRM/PIM-Embedding-Lookup/upmem/PIM-common/common/include/common.h
+sed -i "10c ${coldpu}" /home/kaist_icn/wuxiangyu/UPMEM-DLRM/PIM-Embedding-Lookup/upmem/PIM-common/common/include/common.h
 }
 
 

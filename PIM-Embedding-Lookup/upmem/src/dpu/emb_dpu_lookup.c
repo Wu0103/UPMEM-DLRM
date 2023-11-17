@@ -8,7 +8,7 @@
 #include <defs.h>
 #include <barrier.h>
 #include <string.h>
-#include "common/include/common.h"
+#include "../../PIM-common/common/include/common.h"
 #include "emb_types.h"
 
 BARRIER_INIT(mybarrier, NR_TASKLETS);
